@@ -10,39 +10,37 @@ using System.Threading.Tasks;
 
 namespace Servicios
 {
-    public class BookService
+    public class BookService : IBookService
     {
         private readonly BibliotecaContext _context;
         public BookService(BibliotecaContext context)
         {
             _context = context;
         }
+
+
         public async Task<SaveBookResponse> SaveAsync(BookDTO bookDTO)
         {
 
-
-            if (EditorialIsValid(bookDTO.IdEditorial))
+            if (!EditorialExist(bookDTO.IdEditorial))
             {
-                if (AutorlIsValid(bookDTO.IdAutor))
-                {
-
-                    if (NumberBookAllowedIsValid(bookDTO.IdEditorial))
-                    {
-                        Book _book = MapBook(bookDTO);
-                        _context.Books.Add(_book);
-                        await _context.SaveChangesAsync();
-                        return new SaveBookResponse(bookDTO);
-                    }
-
-                    throw new BookLimitException($" No es posible registrar el libro, se alcanzó el máximo permitido");
-
-                }
-
-                throw new AutorNotFoundException($"El autor no está registrado");
-
+                throw new EditorialNotFoundException("La editorial no está registrada");
             }
-            throw new EditorialNotFoundException("La editorial no está registrada");
 
+            if (!AutorExist(bookDTO.IdAutor))
+            {
+                throw new AutorNotFoundException($"El autor no está registrado");
+            }
+
+            if (!CountBookInEditorialAllowedIsValid(bookDTO.IdEditorial))
+            {
+                throw new BookLimitException($" No es posible registrar el libro, se alcanzó el máximo permitido");
+            }
+
+            var _book = MapBook(bookDTO);
+            _context.Books.Add(_book);
+            await _context.SaveChangesAsync();
+            return new SaveBookResponse(bookDTO);
 
 
         }
@@ -75,37 +73,25 @@ namespace Servicios
             };
         }
 
-        private bool NumberBookAllowedIsValid(int id)
+        private bool CountBookInEditorialAllowedIsValid(int id)
         {
-            var NumberOfBooksSave = _context.Books.Where(l => l.IdEditorial == id).Count();
-            var editorial = _context.Editorials.Where(e => e.Id == id).FirstOrDefault();
-            if (NumberOfBooksSave >= editorial.MaximumNumberOfBook)
+            var numberOfBooksSave = _context.Books.Count(l => l.IdEditorial == id);
+            var editorial = _context.Editorials.FirstOrDefault(e => e.Id == id);
+            if (editorial.MaximumNumberOfBook != -1 && numberOfBooksSave >= editorial.MaximumNumberOfBook)
             {
                 return false;
             }
             return true;
         }
 
-        private bool EditorialIsValid(int id)
+        private bool EditorialExist(int id)
         {
-            var editorial = _context.Editorials.Where(e => e.Id == id).FirstOrDefault();
-            if (editorial == null)
-            {
-                return false;
-            }
-            return true;
-
+            return _context.Editorials.Any(e => e.Id == id);
         }
 
-        private bool AutorlIsValid(int id)
+        private bool AutorExist(int id)
         {
-            var autor = _context.Editorials.Where(e => e.Id == id).FirstOrDefault();
-            if (autor == null)
-            {
-                return false;
-            }
-            return true;
-
+            return _context.Autores.Any(e => e.Id == id);
         }
 
 

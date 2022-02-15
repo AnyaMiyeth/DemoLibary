@@ -1,60 +1,45 @@
 ﻿using DTOs.Editorals;
 using Entidades;
-using System;
+using Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Servicios
 {
-    public class EditorialService
+    public class EditorialService : IEditorialService
     {
         private readonly BibliotecaContext _context;
         public EditorialService(BibliotecaContext context)
         {
             _context = context;
         }
-
-        public GetEditorialDTO GetAll()
+        public async Task<IEnumerable<EditorialDTO>> GetAll()
         {
-            try
+
+            return await _context.Editorials.Select(e => new EditorialDTO()
             {
-                return new GetEditorialDTO(_context.Editorials.AsEnumerable().Select(e => new EditorialDTO()
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    CorrespondenceAddress =
-                    e.CorrespondenceAddress,
-                    Email = e.Email,
-                    Telephon = e.Telephon,
-                    MaximumNumberOfBook = e.MaximumNumberOfBook
-                }));
-            }
-            catch (Exception e)
-            {
-                return new GetEditorialDTO($"Error de la Aplicacion al Consultar: {e.Message}");
-            }
+                Id = e.Id,
+                Name = e.Name,
+                CorrespondenceAddress =
+                e.CorrespondenceAddress,
+                Email = e.Email,
+                Telephon = e.Telephon,
+                MaximumNumberOfBook = e.MaximumNumberOfBook
+            }).ToListAsync();
+
 
         }
-        public EditorialResponseDTO Save(EditorialDTO editorialDTO)
+        public async Task<EditorialDTO> Save(EditorialDTO editorialDTO)
         {
-            try
-            {
-                Editorial editorial = MapEditorial(editorialDTO);
-                _context.Editorials.Add(editorial);
-                _context.SaveChanges();
-
-                return new EditorialResponseDTO(editorialDTO);
-            }
-            catch (Exception e)
-            {
-                return new EditorialResponseDTO($"Error de la Aplicacion: {e.Message}");
-            }
-
+            var editorial = MapperEditorial(editorialDTO);
+            _context.Editorials.Add(editorial);
+            await _context.SaveChangesAsync();
+            editorialDTO.Id = editorial.Id;
+            return editorialDTO;
         }
-
-        private static Editorial MapEditorial(EditorialDTO editorialRequest)
+        private static Editorial MapperEditorial(EditorialDTO editorialRequest)
         {
             return new Editorial
             {
