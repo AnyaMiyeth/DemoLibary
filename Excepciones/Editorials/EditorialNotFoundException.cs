@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Excepciones.Editorials
 {
-    [Serializable]
-    public class EditorialNotFoundException:Exception
-    {
-       
 
+    [Serializable]
+    public class EditorialNotFoundException:ApplicationException
+    {
         public EditorialNotFoundException() { }
 
         public EditorialNotFoundException(string message)

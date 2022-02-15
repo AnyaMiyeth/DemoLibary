@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Servicios;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,20 +21,23 @@ namespace Controladores.Controllers
         }
         // GET: api/<LibroController>
         [HttpGet]
-        public IEnumerable<BookViewModel> Get()
+        [Produces("application/json", Type = typeof(IEnumerable<BookViewModel>))]
+        public async Task<IActionResult> Get()
         {
-            return _bookService.GetAll().Select(b=> new BookViewModel(b));
+            var result= await _bookService.GetAllAsync();
+            return Ok(result.Select(b=> new BookViewModel(b)));
         }
 
 
 
         // POST api/<LibroController>
         [HttpPost]
-        public ActionResult<BookViewModel> Post(BookInputModel bookInput)
+        [Produces("application/json", Type = typeof(BookViewModel))]
+        public async Task<IActionResult> Post(BookInputModel bookInput)
         {
             BookDTO _book = MapearLibro(bookInput);
 
-            var response = _bookService.Save(_book);
+            var response = await _bookService.SaveAsync(_book);
             if (response.Success == true)
             {
                 return BadRequest(response.Message);

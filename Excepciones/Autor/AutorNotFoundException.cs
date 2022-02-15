@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Excepciones.Autor
 {
     [Serializable]
-    public class AutorNotFoundException:Exception
+    public class AutorNotFoundException: ApplicationException
     {
         public AutorNotFoundException(string message)
              : base(message) { }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DTOs.Autores
 {
-    public class GetAutorResponse
+    public class GetAutorResponse : IErrorResponse
     {
         public IEnumerable<AutorDTO> Autores { get; set; }
         public string Message { get; set; }

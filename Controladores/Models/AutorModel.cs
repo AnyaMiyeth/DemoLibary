@@ -1,11 +1,12 @@
 ﻿using DTOs.Autores;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Controladores.Models
 {
     public class AutorInputModel
     {
-
+        [Required(ErrorMessage = "Nombre del Autor Requerido")]
         public string Name { get; set; }
         public DateTime Birthday { get; set; }
         public string CityOfOrigin { get; set; }

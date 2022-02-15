@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Servicios;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,9 +21,10 @@ namespace Controladores.Controllers
         }
         // GET: api/<AutorController>
         [HttpGet]
-        public ActionResult<IEnumerable<AutorViewModel>> GetAll()
+        [Produces("application/json", Type = typeof(IEnumerable<AutorViewModel>))]
+        public async Task<IActionResult> GetAllAsync()
         {
-            var response = autorService.GetAll();
+            var response = await autorService.GetAllAsync();
             if (response.Success == false)
             {
                 return BadRequest(response.Message);
@@ -34,10 +36,11 @@ namespace Controladores.Controllers
 
         // POST api/<AutorController>
         [HttpPost]
-        public ActionResult<AutorViewModel> Post(AutorInputModel autorInput)
+        [Produces("application/json", Type = typeof(AutorViewModel))]
+        public async Task<ActionResult> Post(AutorInputModel autorInput)
         {
             var autor = MapAutor(autorInput);
-            var response = autorService.Save(autor);
+            var response = await autorService.SaveAsync(autor);
             if (response.Success == false)
             {
                 return BadRequest(response.Message);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Excepciones.Book
 {
     [Serializable]
-    public class BookLimitException:Exception
+    public class BookLimitException: ApplicationException
     {
         public BookLimitException(string message)
             : base(message) { }

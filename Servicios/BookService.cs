@@ -1,10 +1,11 @@
 ﻿using DTOs.Books;
 using Entidades;
+using Excepciones.Autor;
+using Excepciones.Book;
 using Excepciones.Editorials;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Servicios
@@ -16,42 +17,49 @@ namespace Servicios
         {
             _context = context;
         }
-        public SaveBookResponse Save(BookDTO bookDTO)
+        public async Task<SaveBookResponse> SaveAsync(BookDTO bookDTO)
         {
-            try
+
+
+            if (EditorialIsValid(bookDTO.IdEditorial))
             {
-
-                if (EditorialIsValid(bookDTO.IdEditorial))
+                if (AutorlIsValid(bookDTO.IdAutor))
                 {
-                    if (AutorlIsValid(bookDTO.IdAutor))
+
+                    if (NumberBookAllowedIsValid(bookDTO.IdEditorial))
                     {
-
-                        if (NumberBookAllowedIsValid(bookDTO.IdEditorial))
-                        {
-                            Book _book = MapBook(bookDTO);
-                            _context.Books.Add(_book);
-
-                            _context.SaveChanges();
-                            return new SaveBookResponse(bookDTO);
-                        }
-
-                        throw new EditorialNotFoundException($" No es posible registrar el libro, se alcanzó el máximo permitido");
-
+                        Book _book = MapBook(bookDTO);
+                        _context.Books.Add(_book);
+                        await _context.SaveChangesAsync();
+                        return new SaveBookResponse(bookDTO);
                     }
 
-                    throw new EditorialNotFoundException($"El autor no está registrado");
+                    throw new BookLimitException($" No es posible registrar el libro, se alcanzó el máximo permitido");
 
                 }
-                throw new EditorialNotFoundException("La editorial no está registrada"); 
+
+                throw new AutorNotFoundException($"El autor no está registrado");
 
             }
-            catch (Exception e)
-            {
-                return new SaveBookResponse($"Error de la Aplicacion: {e.Message}");
-            }
+            throw new EditorialNotFoundException("La editorial no está registrada");
+
+
 
         }
+        public async Task<IEnumerable<BookDTO>> GetAllAsync()
+        {
+            return await _context.Books.Select(b => new BookDTO()
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Year = b.Year,
+                Genres = b.Genres,
+                NumberOfPages = b.NumberOfPages,
+                IdEditorial = b.IdEditorial,
+                IdAutor = b.IdAutor,
 
+            }).ToListAsync();
+        }
         private static Book MapBook(BookDTO book)
         {
             return new Book()
@@ -100,13 +108,6 @@ namespace Servicios
 
         }
 
-        public IEnumerable<BookDTO> GetAll()
-        {
-            return _context.Books.AsEnumerable().Select(b=> new BookDTO() 
-            { 
-            
-            
-            });
-        }
+
     }
 }
