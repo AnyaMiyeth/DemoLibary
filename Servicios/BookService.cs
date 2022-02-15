@@ -42,17 +42,21 @@ namespace Servicios
         }
         public async Task<IEnumerable<BookDTO>> GetAllAsync()
         {
-            return await _context.Books.Select(b => new BookDTO()
+            var books = await _context.Books.Include(t=>t.Autor).Select(b => new BookDTO()
             {
                 Id = b.Id,
                 Title = b.Title,
                 Year = b.Year,
                 Genres = b.Genres,
                 NumberOfPages = b.NumberOfPages,
-                IdEditorial = b.IdEditorial,
-                IdAutor = b.IdAutor,
+                IdEditorial = b.EditorialId,
+                IdAutor = b.AutorId,
+                Autor = b.Autor.Name,
+                Editorial=b.Editorial.Name
 
             }).ToListAsync();
+
+            return books;
         }
         private static Book MapBook(BookDTO book)
         {
@@ -63,15 +67,15 @@ namespace Servicios
                 Year = book.Year,
                 Genres = book.Genres,
                 NumberOfPages = book.NumberOfPages,
-                IdEditorial = book.IdEditorial,
-                IdAutor = book.IdAutor,
+                EditorialId = book.IdEditorial,
+                AutorId = book.IdAutor,
 
             };
         }
 
         private bool NumberBookAllowedInEditorial(int id)
         {
-            var numberOfBooksSave = _context.Books.Count(l => l.IdEditorial == id);
+            var numberOfBooksSave = _context.Books.Count(l => l.EditorialId == id);
             var editorial = _context.Editorials.FirstOrDefault(e => e.Id == id);
             if (editorial.MaximumNumberOfBook != -1 && numberOfBooksSave >= editorial.MaximumNumberOfBook)
             {

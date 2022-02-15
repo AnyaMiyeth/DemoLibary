@@ -15,5 +15,7 @@ namespace DTOs.Books
         public int NumberOfPages { get; set; }
         public int IdEditorial { get; set; }
         public int IdAutor { get; set; }
+        public string Autor { get; set; }
+        public string Editorial { get; set; }
     }
 }

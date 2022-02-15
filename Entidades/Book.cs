@@ -13,11 +13,11 @@ namespace Entidades
         public string Year { get; set; }
         public string Genres { get; set; }
         public int NumberOfPages { get; set; }
-        public int IdEditorial { get; set; }
-        public int IdAutor { get; set; }
+        public int EditorialId { get; set; }
+        public int AutorId { get; set; }
 
-        public Autor Autor { get; set; }
-        public Editorial Editorial { get; set; }
+        public virtual Autor Autor { get; set; }
+        public virtual Editorial Editorial { get; set; }
 
     }
 }

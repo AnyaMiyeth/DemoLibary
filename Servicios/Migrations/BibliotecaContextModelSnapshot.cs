@@ -50,20 +50,14 @@ namespace Servicios.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AutorId")
+                    b.Property<int>("AutorId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EditorialId")
+                    b.Property<int>("EditorialId")
                         .HasColumnType("int");
 
                     b.Property<string>("Genres")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("IdAutor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdEditorial")
-                        .HasColumnType("int");
 
                     b.Property<int>("NumberOfPages")
                         .HasColumnType("int");
@@ -114,11 +108,15 @@ namespace Servicios.Migrations
                 {
                     b.HasOne("Entidades.Autor", "Autor")
                         .WithMany("Books")
-                        .HasForeignKey("AutorId");
+                        .HasForeignKey("AutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Entidades.Editorial", "Editorial")
                         .WithMany("Books")
-                        .HasForeignKey("EditorialId");
+                        .HasForeignKey("EditorialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Autor");
 

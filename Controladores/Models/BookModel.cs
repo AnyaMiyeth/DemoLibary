@@ -12,14 +12,16 @@ namespace Controladores.Models
         public string Genres { get; set; }
         public int NumberOfPages { get; set; }
         [Required(ErrorMessage = "Editorial Requerida")]
-        public int IdEditortial { get; set; }
+        public int EditorialId { get; set; }
         [Required(ErrorMessage = "Autor Requerido")]
-        public int IdAutor { get; set; }
+        public int AutorId { get; set; }
     }
 
     public class BookViewModel : BookInputModel
     {
         public int Id { get; set; }
+        public string Autor { get; set; }
+        public string Editorial { get; set; }
         public BookViewModel(BookDTO book)
         {
             Id = book.Id;
@@ -27,8 +29,10 @@ namespace Controladores.Models
             Year = book.Year;
             Genres = book.Genres;
             NumberOfPages = book.NumberOfPages;
-            IdEditortial = book.IdEditorial;
-            IdAutor = book.IdAutor;
+            EditorialId = book.IdEditorial;
+            AutorId = book.IdAutor;
+            Autor = book.Autor;
+            Editorial = book.Editorial;
 
         }
     }

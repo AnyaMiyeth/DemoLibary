@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Servicios.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Migrate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,7 @@ namespace Servicios.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Birthyday = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CityOfOrigin = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -50,10 +50,8 @@ namespace Servicios.Migrations
                     Year = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Genres = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NumberOfPages = table.Column<int>(type: "int", nullable: false),
-                    IdEditorial = table.Column<int>(type: "int", nullable: false),
-                    IdAutor = table.Column<int>(type: "int", nullable: false),
-                    AutorId = table.Column<int>(type: "int", nullable: true),
-                    EditorialId = table.Column<int>(type: "int", nullable: true)
+                    EditorialId = table.Column<int>(type: "int", nullable: false),
+                    AutorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,13 +61,13 @@ namespace Servicios.Migrations
                         column: x => x.AutorId,
                         principalTable: "Autores",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Books_Editorials_EditorialId",
                         column: x => x.EditorialId,
                         principalTable: "Editorials",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

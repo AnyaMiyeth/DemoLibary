@@ -46,8 +46,8 @@ namespace Controladores.Controllers
                 Year = libroInput.Year,
                 NumberOfPages = libroInput.NumberOfPages,
                 Genres = libroInput.Genres,
-                IdEditorial = libroInput.IdEditortial,
-                IdAutor = libroInput.IdAutor,
+                IdEditorial = libroInput.EditorialId,
+                IdAutor = libroInput.AutorId,
             };
         }
     }
