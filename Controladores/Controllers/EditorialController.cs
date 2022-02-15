@@ -1,5 +1,6 @@
 ﻿using Controladores.Models;
 using DTOs.Editorals;
+using Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Servicios;
 using System.Collections.Generic;
@@ -14,37 +15,29 @@ namespace Controladores.Controllers
     [ApiController]
     public class EditorialController : ControllerBase
     {
-        private readonly BibliotecaContext _context;
-        private readonly EditorialService editorialService;
-        public EditorialController(BibliotecaContext context)
+        
+        private readonly IEditorialService _editorialService;
+        public EditorialController(IEditorialService editorialService)
         {
-            editorialService = new EditorialService(context);
-            _context = context;
+            _editorialService = editorialService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EditorialViewModel>> GetAll()
+        [Produces("application/json", Type = typeof(IEnumerable<EditorialViewModel>))]
+        public async Task<ActionResult> GetAll()
         {
-            var response = editorialService.GetAll();
-            if (response.Success == false)
-            {
-                return BadRequest(response.Message);
-            }
-            return Ok(response.Editoriales.Select(e => new EditorialViewModel(e)));
+            var response = await _editorialService.GetAll();
+            return Ok(response.Select(e => new EditorialViewModel(e)));
         }
 
         // POST api/<EditorialController>
         [HttpPost]
-        public ActionResult<EditorialViewModel> Post(EditorialInputModel editorialInputModel)
+        [Produces("application/json", Type = typeof(EditorialViewModel))]
+        public async Task <ActionResult> Post(EditorialInputModel editorialInputModel)
         {
             var editorial = MapEditorial(editorialInputModel);
-            var response = editorialService.Save(editorial);
-            if (response.Success == false)
-            {
-                return  BadRequest(response.Message);
-            }
-            return Ok(new EditorialViewModel(response.Editorial));
-
+            var response =  await _editorialService.Save(editorial);
+            return Ok(new EditorialViewModel(response));
         }
 
         private static EditorialDTO MapEditorial(EditorialInputModel editorialInputlModel)
@@ -55,9 +48,7 @@ namespace Controladores.Controllers
                 Telephon = editorialInputlModel.Telephon,
                 CorrespondenceAddress = editorialInputlModel.CorrespondenceAddress,
                 Email = editorialInputlModel.Email,
-                MaximumNumberOfBook = editorialInputlModel.MaximumNumberOfBook,
-
-
+                MaximumNumberOfBook = editorialInputlModel.MaximumNumberOfBook
             };
             return editorialDTO;
         }

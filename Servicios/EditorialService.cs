@@ -43,7 +43,6 @@ namespace Servicios
         {
             return new Editorial
             {
-                Id = editorialRequest.Id,
                 Name = editorialRequest.Name,
                 CorrespondenceAddress = editorialRequest.CorrespondenceAddress,
                 Telephon = editorialRequest.Telephon,

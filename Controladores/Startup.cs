@@ -1,4 +1,5 @@
 using Controladores.Middleware;
+using Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,10 +35,14 @@ namespace Controladores
             services.AddControllers();
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BibliotecaContext>(opt => opt.UseSqlServer(connectionString));
+            services.AddScoped<IEditorialService, EditorialService>();
+            services.AddScoped<IAutorService, AutorService>();
+            services.AddScoped<IBookService, BookService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Controladores", Version = "v1" });
             });
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +62,7 @@ namespace Controladores
             app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
-
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

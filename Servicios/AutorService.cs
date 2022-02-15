@@ -2,7 +2,7 @@
 using Entidades;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,50 +15,31 @@ namespace Servicios
         {
             _context = context;
         }
-
-       
-
-        public async Task<GetAutorResponse> GetAllAsync()
+        public async Task<IEnumerable<AutorDTO>> GetAllAsync()
         {
-            try
+            var autores = await _context.Autores.Select(a => new AutorDTO()
             {
-                var autores = await _context.Autores.Select(a => new AutorDTO()
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Birthday = a.Birthday,
-                    CityOfOrigin = a.CityOfOrigin,
-                    Email = a.Email,
-                }).ToListAsync();
+                Id = a.Id,
+                Name = a.Name,
+                Birthday = a.Birthday,
+                CityOfOrigin = a.CityOfOrigin,
+                Email = a.Email,
+            }).ToListAsync();
 
-                return new GetAutorResponse(autores);
-            }
-            catch (Exception e)
-            {
-
-                return new GetAutorResponse($"Error de Aplicación al consultar: {e.Message} ");
-            }
+            return autores;
 
 
         }
-
-
-        public async Task<SaveAutorResponse> SaveAsync(AutorDTO autorDTO)
+        public async Task<AutorDTO> SaveAsync(AutorDTO autorDTO)
         {
-            try
-            {
-                Autor _autor = MapperAutor(autorDTO);
-                _context.Add(_autor);
-               await _context.SaveChangesAsync();
 
-                return new SaveAutorResponse(autorDTO);
-            }
-            catch (Exception e)
-            {
-                return new SaveAutorResponse($"Error de Aplicaion: {e.Message} ");
-            }
+            var autor = MapperAutor(autorDTO);
+            _context.Add(autor);
+            await _context.SaveChangesAsync();
+            autorDTO.Id = autor.Id;
+            return autorDTO;
+
         }
-
         private static Autor MapperAutor(AutorDTO autorDTO)
         {
             return new Autor()
@@ -72,6 +53,5 @@ namespace Servicios
             };
         }
     }
-
 
 }

@@ -3,6 +3,7 @@ using Entidades;
 using Excepciones.Autor;
 using Excepciones.Book;
 using Excepciones.Editorials;
+using Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,30 +20,25 @@ namespace Servicios
         }
 
 
-        public async Task<SaveBookResponse> SaveAsync(BookDTO bookDTO)
+        public async Task<BookDTO> SaveAsync(BookDTO bookDTO)
         {
-
             if (!EditorialExist(bookDTO.IdEditorial))
             {
                 throw new EditorialNotFoundException("La editorial no está registrada");
             }
-
             if (!AutorExist(bookDTO.IdAutor))
             {
                 throw new AutorNotFoundException($"El autor no está registrado");
             }
-
-            if (!CountBookInEditorialAllowedIsValid(bookDTO.IdEditorial))
+            if (!NumberBookAllowedInEditorial(bookDTO.IdEditorial))
             {
                 throw new BookLimitException($" No es posible registrar el libro, se alcanzó el máximo permitido");
             }
-
-            var _book = MapBook(bookDTO);
-            _context.Books.Add(_book);
+            var book = MapBook(bookDTO);
+            _context.Books.Add(book);
             await _context.SaveChangesAsync();
-            return new SaveBookResponse(bookDTO);
-
-
+            bookDTO.Id=book.Id;
+            return bookDTO;
         }
         public async Task<IEnumerable<BookDTO>> GetAllAsync()
         {
@@ -73,7 +69,7 @@ namespace Servicios
             };
         }
 
-        private bool CountBookInEditorialAllowedIsValid(int id)
+        private bool NumberBookAllowedInEditorial(int id)
         {
             var numberOfBooksSave = _context.Books.Count(l => l.IdEditorial == id);
             var editorial = _context.Editorials.FirstOrDefault(e => e.Id == id);

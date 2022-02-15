@@ -1,11 +1,12 @@
 ﻿using DTOs.Autores;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Interfaces
 {
     public interface IAutorService
     {
-        Task<GetAutorResponse> GetAllAsync();
-        Task<SaveAutorResponse> SaveAsync(AutorDTO autorDTO);
+        Task<IEnumerable<AutorDTO>> GetAllAsync();
+        Task<AutorDTO> SaveAsync(AutorDTO autorDTO);
     }
 }
