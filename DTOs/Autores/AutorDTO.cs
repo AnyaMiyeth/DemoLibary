@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Entidades
+namespace DTOs.Autores
 {
-    public class Autor
+   public class AutorDTO
     {
-        private ICollection<Book> books;
-
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Birthyday { get; set; }
         public string CityOfOrigin { get; set; }
         public string Email { get; set; }
-
-        public ICollection<Book> Books { get => books; set => books = value; }
-
     }
 }
