@@ -19,7 +19,7 @@ namespace Controladores.Models
         {
             Id = autor.Id;
             Name = autor.Name;
-            Birthday = autor.Birthyday;
+            Birthday = autor.Birthday;
             CityOfOrigin = autor.CityOfOrigin;
             Email = autor.Email;
         }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DTOs.Autores;
+using Entidades;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios
 {
@@ -18,7 +17,15 @@ namespace Servicios
         {
             try
             {
-                return new GetAutorResponse(_context.Autores.AsEnumerable());
+                return new GetAutorResponse(_context.Autores.AsEnumerable().Select(a => new AutorDTO()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Birthday = a.Birthday,
+                    CityOfOrigin = a.CityOfOrigin,
+                    Email = a.Email,
+
+                }));
             }
             catch (Exception e)
             {
@@ -30,14 +37,23 @@ namespace Servicios
         }
 
 
-        public SaveAutorResponse Save(Autor autor)
+        public SaveAutorResponse Save(AutorDTO autorDTO)
         {
             try
             {
-                _context.Add(autor);
+                var _autor = new Autor()
+                {
+
+                    Id = autorDTO.Id,
+                    Name = autorDTO.Name,
+                    Birthday = autorDTO.Birthday,
+                    CityOfOrigin = autorDTO.CityOfOrigin,
+                    Email = autorDTO.Email,
+                };
+                _context.Add(_autor);
                 _context.SaveChanges();
 
-                return new SaveAutorResponse(autor);
+                return new SaveAutorResponse(autorDTO);
             }
             catch (Exception e)
             {
@@ -47,5 +63,5 @@ namespace Servicios
         }
     }
 
-    
+
 }

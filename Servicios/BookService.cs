@@ -1,4 +1,5 @@
 ﻿using DTOs.Books;
+using Entidades;
 using Excepciones.Editorials;
 using System;
 using System.Collections.Generic;
@@ -15,22 +16,23 @@ namespace Servicios
         {
             _context = context;
         }
-        public SaveBookResponse Save(BookDTO book)
+        public SaveBookResponse Save(BookDTO bookDTO)
         {
             try
             {
 
-                if (EditorialIsValid(book.IdEditorial))
+                if (EditorialIsValid(bookDTO.IdEditorial))
                 {
-                    if (AutorlIsValid(book.IdAutor))
+                    if (AutorlIsValid(bookDTO.IdAutor))
                     {
 
-                        if (NumberBookAllowedIsValid(book.IdEditorial))
+                        if (NumberBookAllowedIsValid(bookDTO.IdEditorial))
                         {
-                            _context.Books.Add(book);
+                            Book _book = MapBook(bookDTO);
+                            _context.Books.Add(_book);
 
                             _context.SaveChanges();
-                            return new SaveBookResponse(book);
+                            return new SaveBookResponse(bookDTO);
                         }
 
                         throw new EditorialNotFoundException($" No es posible registrar el libro, se alcanzó el máximo permitido");
@@ -48,6 +50,21 @@ namespace Servicios
                 return new SaveBookResponse($"Error de la Aplicacion: {e.Message}");
             }
 
+        }
+
+        private static Book MapBook(BookDTO book)
+        {
+            return new Book()
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Year = book.Year,
+                Genres = book.Genres,
+                NumberOfPages = book.NumberOfPages,
+                IdEditorial = book.IdEditorial,
+                IdAutor = book.IdAutor,
+
+            };
         }
 
         private bool NumberBookAllowedIsValid(int id)

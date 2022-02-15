@@ -9,11 +9,11 @@ namespace DTOs.Autores
 {
     public record SaveAutorResponse
     {
-        public Autor Autor { get; set; }
+        public AutorDTO Autor { get; set; }
         public string Message { get; set; }
         public bool Success { get; set; }
 
-        public SaveAutorResponse(Autor autor)
+        public SaveAutorResponse(AutorDTO autor)
         {
             Autor = autor;
             Success = true;

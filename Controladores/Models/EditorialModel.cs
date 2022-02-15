@@ -18,8 +18,7 @@ namespace Controladores.Models
         [DataType(DataType.EmailAddress, ErrorMessage = "E-mail no es valido")]
         public string Email { get; set; }
 
-        [Range(typeof(int), "-1", "??",
-        ErrorMessage = "Value for {0} must be between {1} and {2}")]
+      
         public int MaximumNumberOfBook { get; set; }
     }
 

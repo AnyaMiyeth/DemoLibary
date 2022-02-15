@@ -7,10 +7,13 @@ namespace Controladores.Models
     {
         [Required(ErrorMessage = "Titulo del Libro Requerido")]
         public string Title { get; set; }
+        [Required(ErrorMessage = "Año del Libro Requerido")]
         public string Year { get; set; }
         public string Genres { get; set; }
         public int NumberOfPages { get; set; }
+        [Required(ErrorMessage = "Editorial Requerida")]
         public int IdEditortial { get; set; }
+        [Required(ErrorMessage = "Autor Requerido")]
         public int IdAutor { get; set; }
     }
 
